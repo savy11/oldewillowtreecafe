@@ -50,8 +50,8 @@
   sections.forEach(function (section) { observerNav.observe(section); });
 
   /* ---- Mobile Nav ---- */
-  const hamburger  = document.getElementById('hamburger');
-  const mobileNav  = document.getElementById('mobileNav');
+  const hamburger = document.getElementById('hamburger');
+  const mobileNav = document.getElementById('mobileNav');
   const mobileClose = document.getElementById('mobileClose');
   const mobileLinks = document.querySelectorAll('.mobile-link');
 
@@ -100,11 +100,13 @@
     document.querySelectorAll('.menu-tab').forEach(function (tab) {
       tab.classList.remove('active');
     });
+    console.log('sdfds');
+
     // Activate target
     const panel = document.getElementById('panel-' + tabName);
-    const tab   = document.getElementById('tab-' + tabName);
+    const tab = document.getElementById('tab-' + tabName);
     if (panel) panel.classList.add('active');
-    if (tab)   tab.classList.add('active');
+    if (tab) tab.classList.add('active');
   };
 
   /* ---- Scroll Reveal Animation ---- */
@@ -177,24 +179,55 @@
   updateTodayHours();
 
   /* ---- Announcement Bar rotating messages ---- */
+  // Each message is an array of [text, isHighlight] pairs
   const announcements = [
-    '🍂 Now Open <span>Wed – Sat · 8:00 AM – 3:00 PM</span> &nbsp;|&nbsp; Fresh homemade specials daily &nbsp;|&nbsp; 📍 10 N College St, Myerstown, PA',
-    '☕ Start your morning right — homemade waffles &amp; fresh brewed coffee await! &nbsp;|&nbsp; <span>Rated 4.8⭐ by our community</span>',
-    '🏠 Dining + Shopping — visit our attached <span>Primitive Craft Shop</span> after your meal! &nbsp;|&nbsp; Open Wed–Sat',
+    [
+      ['🍂 Now Open', false],
+      ['Wed – Sat · 8:00 AM – 3:00 PM', true],
+      ['|', 'sep'],
+      ['Fresh homemade specials daily', false],
+      ['|', 'sep'],
+      ['📍 10 N College St, Myerstown, PA', false],
+    ],
+    [
+      ['☕ Start your morning right!', false],
+      ['|', 'sep'],
+      ['Homemade waffles & fresh brewed coffee await', false],
+      ['|', 'sep'],
+      ['Rated 4.8 ⭐ by our community', true],
+    ],
+    [
+      ['🏠 Dining + Shopping', false],
+      ['|', 'sep'],
+      ['Visit our attached Primitive Craft Shop after your meal', false],
+      ['|', 'sep'],
+      ['Open Wed – Sat', true],
+    ],
   ];
   let annIdx = 0;
-  const annBar = document.querySelector('.announcement-bar');
+  const annBar = document.getElementById('announcementBar');
+
+  function renderAnnouncement(bar, msgArr) {
+    bar.innerHTML = '';
+    msgArr.forEach(function (pair) {
+      const sp = document.createElement('span');
+      sp.textContent = pair[0];
+      if (pair[1] === true) sp.className = 'ann-highlight';
+      if (pair[1] === 'sep') sp.className = 'ann-sep';
+      bar.appendChild(sp);
+    });
+  }
 
   if (annBar) {
+    annBar.style.transition = 'opacity 0.4s ease';
     setInterval(function () {
       annIdx = (annIdx + 1) % announcements.length;
       annBar.style.opacity = '0';
       setTimeout(function () {
-        annBar.innerHTML = announcements[annIdx];
+        renderAnnouncement(annBar, announcements[annIdx]);
         annBar.style.opacity = '1';
-      }, 400);
+      }, 420);
     }, 5000);
-    annBar.style.transition = 'opacity 0.4s ease';
   }
 
   /* ---- Gallery Lightbox (Simple) ---- */
@@ -223,7 +256,7 @@
     card.addEventListener('mousemove', function (e) {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top  - rect.height / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
       const tiltX = (y / rect.height) * 6;
       const tiltY = -(x / rect.width) * 6;
       card.style.transform = 'translateY(-6px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg)';
